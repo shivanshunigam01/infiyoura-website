@@ -4,7 +4,7 @@ import { RevealOnScroll } from "@/components/UI/RevealOnScroll";
 export function Process() {
   return (
     <section id="process" className="border-t border-white/10 bg-zinc-950 py-24 lg:py-28">
-      <div className="mx-auto max-w-7xl px-5 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 sm:px-5 lg:px-8">
         <RevealOnScroll className="mb-14 text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[var(--brand-green)]">Process</p>
           <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white sm:text-4xl">How we deliver</h2>

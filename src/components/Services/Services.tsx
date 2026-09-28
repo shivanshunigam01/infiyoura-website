@@ -13,12 +13,12 @@ const SERVICE_IMAGES = [
 
 export function Services() {
   return (
-    <section id="services" className="relative overflow-hidden border-t border-white/10 bg-zinc-950 py-24 lg:py-32">
+    <section id="services" className="relative overflow-hidden border-t border-white/10 bg-zinc-950 py-16 sm:py-24 lg:py-32">
       <div
         className="pointer-events-none absolute -right-32 top-20 h-64 w-64 rounded-full bg-[var(--brand-green)]/10 blur-3xl"
         aria-hidden
       />
-      <div className="mx-auto max-w-7xl px-5 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 sm:px-5 lg:px-8">
         <RevealOnScroll>
           <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[var(--brand-green)]">Services</p>
           <h2 className="mt-3 max-w-3xl text-3xl font-semibold tracking-tight text-white sm:text-4xl md:text-5xl">

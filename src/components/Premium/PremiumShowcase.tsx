@@ -6,7 +6,7 @@ import { cn } from "@/lib/cn";
 export function PremiumShowcase() {
   return (
     <section className="border-t border-white/10 bg-zinc-950 py-24 lg:py-32">
-      <div className="mx-auto max-w-7xl px-5 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 sm:px-5 lg:px-8">
         <RevealOnScroll className="max-w-2xl">
           <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[var(--brand-green)]">Inside the studio</p>
           <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white sm:text-4xl">

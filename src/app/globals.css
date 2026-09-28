@@ -34,6 +34,12 @@ body {
   --story-sticky-height: 100dvh;
 }
 
+@media (max-width: 639px) {
+  :root {
+    --nav-height: 3.65rem;
+  }
+}
+
 @supports (height: 100dvh) {
   :root {
     --story-sticky-height: 100dvh;
@@ -58,6 +64,14 @@ body {
 .story-frame-canvas {
   transform: translateZ(0);
   backface-visibility: hidden;
+}
+
+.story-scroll-section {
+  -webkit-overflow-scrolling: touch;
+}
+
+.touch-pan-y {
+  touch-action: pan-y;
 }
 
 ::selection {

@@ -5,7 +5,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
   return (
     <>
       <Navbar />
-      <main>{children}</main>
+      <main className="min-w-0 overflow-x-clip">{children}</main>
       <Footer />
     </>
   );

@@ -17,7 +17,7 @@ export function PageHeader({ eyebrow, title, description, className, dark = true
         className,
       )}
     >
-      <div className="mx-auto max-w-3xl px-5 lg:px-8">
+      <div className="mx-auto max-w-3xl px-4 sm:px-5 lg:px-8">
         {eyebrow ? (
           <p className="mb-3 text-xs font-semibold uppercase tracking-[0.35em] text-[var(--brand-green)]">{eyebrow}</p>
         ) : null}

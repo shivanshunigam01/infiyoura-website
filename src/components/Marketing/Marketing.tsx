@@ -22,7 +22,7 @@ export function Marketing() {
   return (
     <section id="marketing" className="relative border-y border-white/10 bg-zinc-900 py-24 text-white lg:py-32">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(0,199,107,0.12),transparent_50%)]" />
-      <div className="relative mx-auto max-w-7xl px-5 lg:px-8">
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-5 lg:px-8">
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
           <RevealOnScroll>
             <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[var(--brand-green)]">Solutions</p>

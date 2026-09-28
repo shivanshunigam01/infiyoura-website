@@ -6,7 +6,7 @@ export function Technology() {
 
   return (
     <section id="technology" className="overflow-hidden border-t border-white/10 bg-zinc-900/40 py-20">
-      <div className="mx-auto max-w-7xl px-5 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 sm:px-5 lg:px-8">
         <RevealOnScroll>
           <h2 className="text-2xl font-semibold tracking-tight text-white">Technology & tools</h2>
           <p className="mt-2 text-sm text-zinc-500">Modern stacks for fast, secure, scalable delivery.</p>

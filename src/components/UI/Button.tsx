@@ -8,9 +8,10 @@ type Props = {
   children: React.ReactNode;
   type?: "button" | "submit";
   disabled?: boolean;
+  onClick?: () => void;
 };
 
-export function Button({ href, variant = "primary", className, children, type = "button", disabled }: Props) {
+export function Button({ href, variant = "primary", className, children, type = "button", disabled, onClick }: Props) {
   const base =
     "inline-flex items-center justify-center rounded-full px-6 py-3 text-xs font-semibold uppercase tracking-[0.2em] transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-green)] disabled:opacity-50 active:scale-[0.98]";
   const v = {
@@ -19,9 +20,9 @@ export function Button({ href, variant = "primary", className, children, type = 
     ghost: "text-zinc-600 hover:text-zinc-900",
   };
   const cls = cn(base, v[variant], className);
-  if (href) return <Link href={href} className={cls}>{children}</Link>;
+  if (href) return <Link href={href} className={cls} onClick={onClick}>{children}</Link>;
   return (
-    <button type={type} className={cls} disabled={disabled}>
+    <button type={type} className={cls} disabled={disabled} onClick={onClick}>
       {children}
     </button>
   );

@@ -11,7 +11,7 @@ type Props = {
 export function FounderSection({ className, showEyebrow = true }: Props) {
   return (
     <section className={className ?? "border-t border-white/10 bg-zinc-950 py-24 lg:py-32"}>
-      <div className="mx-auto max-w-7xl px-5 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 sm:px-4 sm:px-5 lg:px-8">
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
           <RevealOnScroll className="relative mx-auto w-full max-w-md lg:max-w-none">
             <div className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-white/10 shadow-[0_24px_80px_rgba(0,0,0,0.45)]">

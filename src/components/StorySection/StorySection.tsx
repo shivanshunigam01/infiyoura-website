@@ -35,6 +35,7 @@ import {
 import { Button } from "@/components/UI/Button";
 
 import { cn } from "@/lib/cn";
+import { getViewportHeight } from "@/lib/viewport";
 
 
 
@@ -113,8 +114,12 @@ export function StorySection() {
     onResize();
 
     window.addEventListener("resize", onResize);
+    window.visualViewport?.addEventListener("resize", onResize);
 
-    return () => window.removeEventListener("resize", onResize);
+    return () => {
+      window.removeEventListener("resize", onResize);
+      window.visualViewport?.removeEventListener("resize", onResize);
+    };
 
   }, []);
 
@@ -132,7 +137,7 @@ export function StorySection() {
 
       const rect = el.getBoundingClientRect();
 
-      const vh = window.innerHeight;
+      const vh = getViewportHeight();
 
       const total = el.offsetHeight - vh;
 
@@ -153,10 +158,14 @@ export function StorySection() {
     window.addEventListener("scroll", update, { passive: true });
 
     window.addEventListener("resize", update);
+    window.visualViewport?.addEventListener("resize", update);
+    window.visualViewport?.addEventListener("scroll", update);
 
     return () => {
       window.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
+      window.visualViewport?.removeEventListener("resize", update);
+      window.visualViewport?.removeEventListener("scroll", update);
     };
 
   }, [reduced, scrollHeightVh]);
@@ -203,7 +212,7 @@ export function StorySection() {
 
       ref={sectionRef}
 
-      className="relative bg-zinc-950"
+      className="story-scroll-section relative bg-zinc-950"
 
       style={{ height: reduced ? "auto" : `${scrollHeightVh}vh` }}
 
@@ -215,7 +224,7 @@ export function StorySection() {
 
         className={cn(
 
-          "sticky top-0 z-0 h-[100dvh] min-h-[100svh] w-full overflow-hidden",
+          "touch-pan-y sticky top-0 z-0 h-[100dvh] max-h-[100dvh] min-h-[100svh] w-full max-w-[100vw] overflow-hidden overscroll-none",
 
           reduced && "relative min-h-[100svh]",
 

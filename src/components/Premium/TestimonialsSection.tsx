@@ -4,7 +4,7 @@ import { RevealOnScroll } from "@/components/UI/RevealOnScroll";
 export function TestimonialsSection() {
   return (
     <section className="border-t border-white/10 bg-zinc-950 py-20 lg:py-24">
-      <div className="mx-auto max-w-7xl px-5 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 sm:px-5 lg:px-8">
         <RevealOnScroll className="text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[var(--brand-green)]">Clients</p>
           <h2 className="mt-3 text-2xl font-semibold text-white sm:text-3xl">Trusted by growing teams</h2>
