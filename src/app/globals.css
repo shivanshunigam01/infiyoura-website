@@ -26,7 +26,8 @@ body {
   color: var(--foreground);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   overflow-x: clip;
-  overflow-y: auto;
+  /* Single scroll root on html — avoids scrollY stuck at 0 while the page still scrolls. */
+  overflow-y: visible;
 }
 
 :root {
@@ -258,6 +259,86 @@ body {
   animation: marquee 40s linear infinite;
 }
 
+@keyframes marquee-reverse {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.marquee-track-reverse {
+  animation: marquee-reverse 48s linear infinite;
+}
+
+.marquee-duration-slow {
+  animation-duration: 52s;
+}
+
+.marquee-duration-fast {
+  animation-duration: 38s;
+}
+
+.marquee-mask {
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 12%,
+    black 88%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 12%,
+    black 88%,
+    transparent 100%
+  );
+}
+
+.tech-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.09) 0%,
+    rgba(255, 255, 255, 0.02) 45%,
+    rgba(0, 0, 0, 0.35) 100%
+  );
+  padding: 0.625rem 1.25rem;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 4px 20px rgba(0, 0, 0, 0.35);
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+.tech-pill:hover {
+  transform: translateY(-2px);
+  border-color: rgba(0, 199, 107, 0.45);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 8px 28px rgba(0, 0, 0, 0.45),
+    0 0 24px rgba(0, 199, 107, 0.12);
+}
+
+.tech-pill-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  background: var(--pill-accent, var(--brand-green));
+  box-shadow: 0 0 10px color-mix(in srgb, var(--pill-accent, var(--brand-green)) 55%, transparent);
+}
+
 .premium-grid {
   background-image:
     linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
@@ -277,7 +358,8 @@ body {
   .animate-scroll-indicator,
   .animate-story-enter,
   .text-shimmer,
-  .marquee-track {
+  .marquee-track,
+  .marquee-track-reverse {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;

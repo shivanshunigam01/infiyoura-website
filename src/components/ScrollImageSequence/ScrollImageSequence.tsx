@@ -1,6 +1,6 @@
 "use client";
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef } from "react";
-import { FRAME_COUNT, getFramePath } from "@/lib/site";
+import { FRAME_COUNT, STORY_ANIMATION_MAX_PROGRESS, getFramePath } from "@/lib/site";
 import { cn } from "@/lib/cn";
 import { getDeviceTier, getMaxCanvasDpr, getSupersampleScale } from "@/lib/viewport";
 
@@ -13,8 +13,8 @@ type Props = {
   representativeFrame?: number;
   fit?: "cover" | "contain";
 };
-/** Scroll scrub with light ease so frames feel animated, not video playback. */
-const SCROLL_FRAME_LERP = 0.55;
+/** 1 = frames locked to scroll position (scroll-scrub hero). */
+const SCROLL_FRAME_LERP = 1;
 const DRAW_FILTER = "contrast(1.1) saturate(1.12) brightness(1.04)";
 
 function paintFrame(
@@ -58,22 +58,7 @@ export const ScrollImageSequence = forwardRef<ScrollImageSequenceHandle, Props>(
     const tier = useRef<ReturnType<typeof getDeviceTier>>("desktop");
     const ready = useRef(false);
     const lastPaint = useRef({ idx: -1, w: 0, h: 0 });
-
-    useImperativeHandle(
-      ref,
-      () => ({
-        setScrollProgress(p: number) {
-          scrollP.current = Math.max(0, Math.min(1, p));
-          if (!reducedMotion) {
-            const frame = 1 + scrollP.current * (FRAME_COUNT - 1);
-            tgt.current = frame;
-            cur.current = frame;
-            lastPaint.current.idx = -1;
-          }
-        },
-      }),
-      [reducedMotion],
-    );
+    const drawRef = useRef<() => void>(() => {});
 
     const load = useCallback(
       (i: number, hi?: boolean) => {
@@ -90,6 +75,10 @@ export const ScrollImageSequence = forwardRef<ScrollImageSequenceHandle, Props>(
           if (!ready.current && i === 1) {
             ready.current = true;
             onReady?.();
+          }
+          if (i === Math.round(cur.current)) {
+            lastPaint.current.idx = -1;
+            drawRef.current();
           }
         };
         img.onload = () => void (img.decode?.().then(done).catch(done) ?? done());
@@ -115,6 +104,31 @@ export const ScrollImageSequence = forwardRef<ScrollImageSequenceHandle, Props>(
         }
       },
       [load],
+    );
+
+    const applySectionProgress = useCallback(
+      (sectionProgress: number) => {
+        const animP = Math.max(0, Math.min(1, sectionProgress * STORY_ANIMATION_MAX_PROGRESS));
+        scrollP.current = animP;
+        const frame = 1 + animP * (FRAME_COUNT - 1);
+        tgt.current = frame;
+        cur.current = frame;
+        lastPaint.current.idx = -1;
+        preload(Math.round(frame));
+      },
+      [preload],
+    );
+
+    useImperativeHandle(
+      ref,
+      () => ({
+        setScrollProgress(sectionProgress: number) {
+          if (reducedMotion) return;
+          applySectionProgress(sectionProgress);
+          drawRef.current();
+        },
+      }),
+      [applySectionProgress, reducedMotion],
     );
 
     const draw = useCallback(() => {
@@ -171,6 +185,10 @@ export const ScrollImageSequence = forwardRef<ScrollImageSequenceHandle, Props>(
         paintFrame(ctx, img, w, h, fit);
       }
     }, [fit, load, reducedMotion, representativeFrame]);
+
+    useEffect(() => {
+      drawRef.current = draw;
+    }, [draw]);
 
     useEffect(() => {
       const refreshTier = () => {

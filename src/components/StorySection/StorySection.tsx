@@ -35,6 +35,7 @@ import {
 import { Button } from "@/components/UI/Button";
 
 import { cn } from "@/lib/cn";
+import { storySectionProgress } from "@/lib/story-scroll";
 import { getStoryScrollViewportHeight } from "@/lib/viewport";
 
 
@@ -126,48 +127,53 @@ export function StorySection() {
 
 
   useEffect(() => {
-
     const el = sectionRef.current;
-
     if (!el || reduced) return;
 
-
+    let raf = 0;
+    let lastProgress = -1;
 
     const update = () => {
-
-      const rect = el.getBoundingClientRect();
-
       const vh = getStoryScrollViewportHeight();
-
-      const total = el.offsetHeight - vh;
-
-      if (total <= 0) return;
-
-      const p = Math.max(0, Math.min(1, -rect.top / total));
-
-      seqRef.current?.setScrollProgress(p * STORY_ANIMATION_MAX_PROGRESS);
-
-      setProgress(p);
-
+      const p = storySectionProgress(el, vh);
+      seqRef.current?.setScrollProgress(p);
+      if (Math.abs(p - lastProgress) > 0.0008) {
+        lastProgress = p;
+        setProgress(p);
+      }
     };
 
+    const onScrollOrResize = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(update);
+    };
 
+    const loop = () => {
+      update();
+      raf = requestAnimationFrame(loop);
+    };
 
     update();
+    raf = requestAnimationFrame(loop);
 
-    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("scroll", onScrollOrResize, { passive: true });
+    document.addEventListener("scroll", onScrollOrResize, { passive: true });
+    window.addEventListener("resize", onScrollOrResize);
+    window.visualViewport?.addEventListener("resize", onScrollOrResize);
+    window.visualViewport?.addEventListener("scroll", onScrollOrResize);
 
-    window.addEventListener("resize", update);
-    window.visualViewport?.addEventListener("resize", update);
-    window.visualViewport?.addEventListener("scroll", update);
+    const ro = new ResizeObserver(onScrollOrResize);
+    ro.observe(el);
 
     return () => {
-      window.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
-      window.visualViewport?.removeEventListener("resize", update);
-      window.visualViewport?.removeEventListener("scroll", update);
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("scroll", onScrollOrResize);
+      document.removeEventListener("scroll", onScrollOrResize);
+      window.removeEventListener("resize", onScrollOrResize);
+      window.visualViewport?.removeEventListener("resize", onScrollOrResize);
+      window.visualViewport?.removeEventListener("scroll", onScrollOrResize);
     };
-
   }, [reduced, scrollHeightVh]);
 
 

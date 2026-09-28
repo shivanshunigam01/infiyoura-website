@@ -30,10 +30,10 @@ export const SITE_ADDRESS_LINES = [
   SITE.address.country,
 ] as const;
 
-/** Scroll track height (vh). Shorter = more frames per scroll — stronger scrub feel. */
-export const STORY_SCROLL_HEIGHT_VH = 520;
-export const STORY_SCROLL_HEIGHT_VH_TABLET = 480;
-export const STORY_SCROLL_HEIGHT_VH_MOBILE = 440;
+/** Scroll track height (vh) — taller track = scroll through more frames in the hero. */
+export const STORY_SCROLL_HEIGHT_VH = 680;
+export const STORY_SCROLL_HEIGHT_VH_TABLET = 620;
+export const STORY_SCROLL_HEIGHT_VH_MOBILE = 560;
 
 /** Typical frame aspect ratio (width / height) for layout centering. */
 export const FRAME_ASPECT_RATIO = 16 / 9;
