@@ -31,6 +31,10 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 ## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Import the GitHub repo `infiyoura-website` in [Vercel](https://vercel.com/new).
+2. **Root Directory** must be the repository root (where `package.json` and `vercel.json` live)—not the parent `golang practice` folder.
+3. Framework preset: **Next.js** (auto-detected). Node.js **20+** is used via `engines` in `package.json`.
+4. Add environment variable `NEXT_PUBLIC_FRAME_BASE_PATH` only if scroll frames are hosted on a CDN (see `public/frames/README.md`).
+5. Deploy. Set primary domain to `infiyoura.com` in Vercel **Domains** (redirect `www` → apex if both are attached).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+`vercel.json` sets the Mumbai region (`bom1`) and standard security headers.

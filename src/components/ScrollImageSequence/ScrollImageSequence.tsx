@@ -1,6 +1,7 @@
 "use client";
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef } from "react";
 import { FRAME_COUNT, getFramePath } from "@/lib/site";
+import { getDeviceTier, getMaxCanvasDpr, getSupersampleScale } from "@/lib/viewport";
 
 export type ScrollImageSequenceHandle = { setScrollProgress: (p: number) => void };
 type Props = {
@@ -9,30 +10,69 @@ type Props = {
   onReady?: () => void;
   reducedMotion?: boolean;
   representativeFrame?: number;
+  fit?: "cover" | "contain";
 };
-const SMOOTH = 0.42;
+/** 1 = frames locked to scroll (scrub). Lower = floaty playback lag. */
+const SCROLL_FRAME_LERP = 1;
+const DRAW_FILTER = "contrast(1.1) saturate(1.12) brightness(1.04)";
+
+function paintFrame(
+  ctx: CanvasRenderingContext2D,
+  img: HTMLImageElement,
+  cw: number,
+  ch: number,
+  fit: "cover" | "contain",
+) {
+  const iw = img.naturalWidth;
+  const ih = img.naturalHeight;
+  const scale = fit === "cover" ? Math.max(cw / iw, ch / ih) : Math.min(cw / iw, ch / ih);
+  const dw = Math.round(iw * scale);
+  const dh = Math.round(ih * scale);
+  const dx = Math.round((cw - dw) / 2);
+  const dy = Math.round((ch - dh) / 2);
+
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
+  ctx.fillStyle = "#050505";
+  ctx.fillRect(0, 0, cw, ch);
+  ctx.filter = DRAW_FILTER;
+  ctx.drawImage(img, dx, dy, dw, dh);
+  ctx.filter = "none";
+}
 
 export const ScrollImageSequence = forwardRef<ScrollImageSequenceHandle, Props>(
   function ScrollImageSequence(
-    { className, onLoadProgress, onReady, reducedMotion, representativeFrame = 150 },
+    { className, onLoadProgress, onReady, reducedMotion, representativeFrame = 150, fit = "cover" },
     ref,
   ) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const boxRef = useRef<HTMLDivElement>(null);
+    const scratchRef = useRef<HTMLCanvasElement | null>(null);
     const imgs = useRef(new Map<number, HTMLImageElement>());
     const loading = useRef(new Set<number>());
     const scrollP = useRef(0);
     const cur = useRef(1);
     const tgt = useRef(1);
     const raf = useRef(0);
-    const mobile = useRef(false);
+    const tier = useRef<ReturnType<typeof getDeviceTier>>("desktop");
     const ready = useRef(false);
+    const lastPaint = useRef({ idx: -1, w: 0, h: 0 });
 
-    useImperativeHandle(ref, () => ({
-      setScrollProgress(p: number) {
-        scrollP.current = Math.max(0, Math.min(1, p));
-      },
-    }));
+    useImperativeHandle(
+      ref,
+      () => ({
+        setScrollProgress(p: number) {
+          scrollP.current = Math.max(0, Math.min(1, p));
+          if (!reducedMotion) {
+            const frame = 1 + scrollP.current * (FRAME_COUNT - 1);
+            tgt.current = frame;
+            cur.current = frame;
+            lastPaint.current.idx = -1;
+          }
+        },
+      }),
+      [reducedMotion],
+    );
 
     const load = useCallback(
       (i: number, hi?: boolean) => {
@@ -59,8 +99,9 @@ export const ScrollImageSequence = forwardRef<ScrollImageSequenceHandle, Props>(
 
     const preload = useCallback(
       (c: number) => {
-        const win = mobile.current ? 24 : 48;
-        const max = mobile.current ? 4 : 8;
+        const isMobile = tier.current === "mobile";
+        const win = isMobile ? 28 : tier.current === "tablet" ? 40 : 56;
+        const max = isMobile ? 8 : tier.current === "tablet" ? 12 : 16;
         let n = loading.current.size;
         for (let k = 0; k <= win && n < max; k++) {
           for (const i of k === 0 ? [c] : [c - k, c + k]) {
@@ -79,10 +120,12 @@ export const ScrollImageSequence = forwardRef<ScrollImageSequenceHandle, Props>(
       const c = canvasRef.current;
       const b = boxRef.current;
       if (!c || !b) return;
-      const ctx = c.getContext("2d", { alpha: false });
+      const ctx = c.getContext("2d", { alpha: false, desynchronized: true });
       if (!ctx) return;
       const r = b.getBoundingClientRect();
-      const dpr = Math.min(devicePixelRatio || 1, 2);
+      if (r.width < 2 || r.height < 2) return;
+
+      const dpr = getMaxCanvasDpr(tier.current);
       const w = Math.max(1, Math.floor(r.width * dpr));
       const h = Math.max(1, Math.floor(r.height * dpr));
       if (c.width !== w || c.height !== h) {
@@ -90,51 +133,88 @@ export const ScrollImageSequence = forwardRef<ScrollImageSequenceHandle, Props>(
         c.height = h;
         c.style.width = `${r.width}px`;
         c.style.height = `${r.height}px`;
+        lastPaint.current = { idx: -1, w: 0, h: 0 };
       }
+
       const idx = reducedMotion ? representativeFrame : Math.max(1, Math.round(cur.current));
       const img = imgs.current.get(idx);
       if (!img?.naturalWidth) {
         if (!reducedMotion) load(idx, true);
         return;
       }
-      const iw = img.naturalWidth;
-      const ih = img.naturalHeight;
-      const s = Math.min(w / iw, h / ih);
-      const dw = iw * s;
-      const dh = ih * s;
-      ctx.fillStyle = "#0a0a0a";
-      ctx.fillRect(0, 0, w, h);
-      ctx.drawImage(img, (w - dw) / 2, (h - dh) / 2, dw, dh);
-    }, [load, reducedMotion, representativeFrame]);
+
+      if (lastPaint.current.idx === idx && lastPaint.current.w === w && lastPaint.current.h === h) {
+        return;
+      }
+      lastPaint.current = { idx, w, h };
+
+      const ss = getSupersampleScale(tier.current);
+      if (ss > 1) {
+        const sw = Math.max(1, Math.floor(w * ss));
+        const sh = Math.max(1, Math.floor(h * ss));
+        if (!scratchRef.current) scratchRef.current = document.createElement("canvas");
+        const scratch = scratchRef.current;
+        if (scratch.width !== sw || scratch.height !== sh) {
+          scratch.width = sw;
+          scratch.height = sh;
+        }
+        const sctx = scratch.getContext("2d", { alpha: false });
+        if (!sctx) return;
+        paintFrame(sctx, img, sw, sh, fit);
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+        ctx.fillStyle = "#050505";
+        ctx.fillRect(0, 0, w, h);
+        ctx.drawImage(scratch, 0, 0, sw, sh, 0, 0, w, h);
+      } else {
+        paintFrame(ctx, img, w, h, fit);
+      }
+    }, [fit, load, reducedMotion, representativeFrame]);
 
     useEffect(() => {
-      mobile.current = matchMedia("(max-width:768px)").matches;
+      const refreshTier = () => {
+        tier.current = getDeviceTier(window.innerWidth);
+        lastPaint.current = { idx: -1, w: 0, h: 0 };
+      };
+      refreshTier();
       load(1, true);
       preload(1);
+
+      const ro = new ResizeObserver(() => draw());
+      if (boxRef.current) ro.observe(boxRef.current);
+
       const tick = () => {
         if (!reducedMotion) {
-          tgt.current = 1 + Math.floor(scrollP.current * (FRAME_COUNT - 1));
-          cur.current += (tgt.current - cur.current) * SMOOTH;
-          if (Math.abs(tgt.current - cur.current) < 0.05) cur.current = tgt.current;
+          tgt.current = 1 + scrollP.current * (FRAME_COUNT - 1);
+          if (SCROLL_FRAME_LERP >= 1) {
+            cur.current = tgt.current;
+          } else {
+            cur.current += (tgt.current - cur.current) * SCROLL_FRAME_LERP;
+            if (Math.abs(tgt.current - cur.current) < 0.02) cur.current = tgt.current;
+          }
           preload(Math.round(cur.current));
         }
         draw();
         raf.current = requestAnimationFrame(tick);
       };
       raf.current = requestAnimationFrame(tick);
-      const rs = () => {
-        mobile.current = matchMedia("(max-width:768px)").matches;
+
+      const onResize = () => {
+        refreshTier();
+        draw();
       };
-      addEventListener("resize", rs);
+      addEventListener("resize", onResize);
+
       return () => {
-        removeEventListener("resize", rs);
+        removeEventListener("resize", onResize);
+        ro.disconnect();
         cancelAnimationFrame(raf.current);
       };
     }, [draw, load, preload, reducedMotion]);
 
     return (
-      <div ref={boxRef} className={className} style={{ width: "100%", height: "100%" }}>
-        <canvas ref={canvasRef} className="h-full w-full" />
+      <div ref={boxRef} className={className} style={{ width: "100%", height: "100%", minHeight: "100%" }}>
+        <canvas ref={canvasRef} className="story-frame-canvas block h-full w-full" aria-hidden />
       </div>
     );
   },

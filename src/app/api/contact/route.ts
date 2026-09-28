@@ -9,7 +9,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: false }, { status: 400 });
     }
     console.info("[contact]", Object.fromEntries(data.entries()));
-    return NextResponse.redirect(new URL("/?sent=1#contact", request.url), 303);
+    return NextResponse.redirect(new URL("/contact?sent=1", request.url), 303);
   } catch {
     return NextResponse.json({ ok: false }, { status: 500 });
   }

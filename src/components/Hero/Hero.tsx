@@ -18,8 +18,8 @@ export function Hero() {
           Technology, design and digital growth solutions for ambitious businesses in India and worldwide.
         </p>
         <div className="mt-10 flex flex-wrap gap-4">
-          <Button href="#story">Start a project</Button>
-          <Button href="#services" variant="secondary">
+          <Button href="/contact">Start a project</Button>
+          <Button href="/services" variant="secondary">
             Explore services
           </Button>
         </div>

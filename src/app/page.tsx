@@ -1,50 +1,110 @@
-import { Navbar } from "@/components/Navbar/Navbar";
-import { Hero } from "@/components/Hero/Hero";
+import { SiteShell } from "@/components/layout/SiteShell";
+
 import { StorySection } from "@/components/StorySection/StorySection";
+
+import { PremiumStats } from "@/components/Premium/PremiumStats";
+
+import { CapabilitiesMarquee } from "@/components/Premium/CapabilitiesMarquee";
+
+import { PremiumIntro } from "@/components/Premium/PremiumIntro";
+import { FounderSection } from "@/components/Premium/FounderSection";
+
+import { PremiumShowcase } from "@/components/Premium/PremiumShowcase";
+
 import { Services } from "@/components/Services/Services";
+
 import { Marketing } from "@/components/Marketing/Marketing";
+
 import { CaseStudies } from "@/components/CaseStudies/CaseStudies";
+
+import { IndustriesSection } from "@/components/Premium/IndustriesSection";
+
+import { TestimonialsSection } from "@/components/Premium/TestimonialsSection";
+
 import { Process } from "@/components/Process/Process";
+
 import { Technology } from "@/components/Technology/Technology";
+
 import { FinalCta } from "@/components/FinalCta/FinalCta";
-import { Footer } from "@/components/Footer/Footer";
+
+import { ContactForm } from "@/components/ContactForm/ContactForm";
+
+import Link from "next/link";
+
+import { SITE } from "@/lib/site";
+
+
 
 export default function Home() {
+
   return (
-    <>
-      <Navbar />
-      <main>
-        <Hero />
-        <StorySection />
-        <Services />
-        <Marketing />
-        <CaseStudies />
-        <Process />
-        <Technology />
-        <FinalCta />
-        <section id="contact" className="border-t border-zinc-200 bg-white py-24">
-          <div className="mx-auto max-w-xl px-5">
-            <h2 className="text-3xl font-semibold tracking-tight">Let&apos;s build something great</h2>
-            <form className="mt-8 space-y-4" action="/api/contact" method="post">
-              <input name="name" required placeholder="Name" className="w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm" />
-              <input name="company" placeholder="Company" className="w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm" />
-              <input name="email" required type="email" placeholder="Email" className="w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm" />
-              <input name="phone" type="tel" placeholder="Phone" className="w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm" />
-              <input name="country" placeholder="Country" className="w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm" />
-              <select name="service" className="w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm" defaultValue="">
-                <option value="" disabled>Service</option>
-                <option>Website</option><option>Mobile App</option><option>AI</option><option>SEO</option><option>Other</option>
-              </select>
-              <input name="budget" placeholder="Budget" className="w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm" />
-              <textarea name="details" required rows={4} placeholder="Project details" className="w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm" />
-              <button type="submit" className="rounded-full bg-[var(--brand-green)] px-6 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-white">
-                Let&apos;s build something great
-              </button>
-            </form>
-          </div>
-        </section>
-      </main>
-      <Footer />
-    </>
+
+    <SiteShell>
+
+      <StorySection />
+
+      <PremiumStats />
+
+      <CapabilitiesMarquee />
+
+      <PremiumIntro />
+
+      <FounderSection />
+
+      <PremiumShowcase />
+
+      <Services />
+
+      <Marketing />
+
+      <CaseStudies />
+
+      <IndustriesSection />
+
+      <TestimonialsSection />
+
+      <Process />
+
+      <Technology />
+
+      <FinalCta />
+
+      <section id="contact" className="border-t border-white/10 bg-zinc-950 py-24 lg:py-28">
+
+        <div className="mx-auto max-w-xl px-5 lg:px-8">
+
+          <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[var(--brand-green)]">Contact</p>
+
+          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white">Let&apos;s build something great</h2>
+
+          <p className="mt-4 text-sm leading-relaxed text-zinc-400">
+
+            Share your vision—we&apos;ll respond within one business day at{" "}
+
+            <a href={`mailto:${SITE.email}`} className="text-white hover:text-[var(--brand-green)]">{SITE.email}</a>
+
+            . Or use our{" "}
+
+            <Link href="/contact" className="text-white underline-offset-2 hover:underline hover:text-[var(--brand-green)]">
+
+              contact page
+
+            </Link>
+
+            .
+
+          </p>
+
+          <ContactForm className="mt-8 [&_input]:border-white/15 [&_input]:bg-white/5 [&_input]:text-white [&_input]:placeholder:text-zinc-500 [&_select]:border-white/15 [&_select]:bg-white/5 [&_select]:text-white [&_textarea]:border-white/15 [&_textarea]:bg-white/5 [&_textarea]:text-white [&_textarea]:placeholder:text-zinc-500" />
+
+        </div>
+
+      </section>
+
+    </SiteShell>
+
   );
+
 }
+
+

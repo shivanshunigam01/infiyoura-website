@@ -1,10 +1,18 @@
 export const NAV = [
-  { label: "Services", href: "#services" },
-  { label: "Solutions", href: "#marketing" },
-  { label: "Work", href: "#work" },
-  { label: "Industries", href: "#process" },
-  { label: "About", href: "#technology" },
-  { label: "Contact", href: "#contact" },
+  { label: "Services", href: "/services" },
+  { label: "Work", href: "/work" },
+  { label: "About", href: "/about" },
+  { label: "Careers", href: "/careers" },
+  { label: "Blog", href: "/blog" },
+  { label: "Contact", href: "/contact" },
+] as const;
+
+export const HOME_SECTIONS = [
+  { label: "Story", href: "/#story" },
+  { label: "Services", href: "/#services" },
+  { label: "Marketing", href: "/#marketing" },
+  { label: "Work", href: "/#work" },
+  { label: "Process", href: "/#process" },
 ] as const;
 
 export const SERVICE_GROUPS = [
@@ -118,20 +126,8 @@ export const STORY_OVERLAYS = [
   },
   {
     start: 0.58,
-    end: 0.78,
+    end: 1,
     title: "BUSINESS GROWS",
     body: "Technology creates new opportunities, customers and connections.",
-  },
-  {
-    start: 0.78,
-    end: 0.92,
-    title: "BUILT TOGETHER",
-    body: "Your goals. Our technology.",
-  },
-  {
-    start: 0.92,
-    end: 1,
-    title: "INFIYOURA",
-    body: "YOUR IDEAS. OUR TECHNOLOGY.",
   },
 ] as const;
