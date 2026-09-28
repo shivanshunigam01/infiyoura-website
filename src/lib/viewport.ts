@@ -4,6 +4,13 @@ export function getViewportHeight(): number {
   return window.visualViewport?.height ?? window.innerHeight;
 }
 
+/** Mouse / trackpad: use layout viewport so wheel scroll matches frame progress. */
+export function getStoryScrollViewportHeight(): number {
+  if (typeof window === "undefined") return 800;
+  const fine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  return fine ? window.innerHeight : getViewportHeight();
+}
+
 export type DeviceTier = "mobile" | "tablet" | "desktop";
 
 export function getDeviceTier(width = typeof window !== "undefined" ? window.innerWidth : 1280): DeviceTier {

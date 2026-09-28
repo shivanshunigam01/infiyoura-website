@@ -35,7 +35,7 @@ import {
 import { Button } from "@/components/UI/Button";
 
 import { cn } from "@/lib/cn";
-import { getViewportHeight } from "@/lib/viewport";
+import { getStoryScrollViewportHeight } from "@/lib/viewport";
 
 
 
@@ -137,7 +137,7 @@ export function StorySection() {
 
       const rect = el.getBoundingClientRect();
 
-      const vh = getViewportHeight();
+      const vh = getStoryScrollViewportHeight();
 
       const total = el.offsetHeight - vh;
 
@@ -299,7 +299,7 @@ export function StorySection() {
 
         <div
 
-          className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center px-6 pt-[calc(var(--nav-height)+var(--safe-top)+0.5rem)] text-center sm:px-10 md:px-12"
+          className="story-hero-layer absolute inset-0 z-10 flex flex-col items-center justify-center px-6 pt-[calc(var(--nav-height)+var(--safe-top)+0.5rem)] text-center sm:px-10 md:px-12"
 
           style={{
 
@@ -400,7 +400,7 @@ export function StorySection() {
 
                 className={cn(
 
-                  "pointer-events-auto mt-8 flex w-full max-w-md flex-col gap-3 sm:mt-10 sm:max-w-none sm:flex-row sm:flex-wrap sm:justify-center sm:gap-4",
+                  "story-hero-cta mt-8 flex w-full max-w-md flex-col gap-3 sm:mt-10 sm:max-w-none sm:flex-row sm:flex-wrap sm:justify-center sm:gap-4",
 
                   !reduced && "animate-fade-up animate-fade-up-d3",
 

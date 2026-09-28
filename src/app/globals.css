@@ -72,6 +72,23 @@ body {
   -webkit-overflow-scrolling: touch;
 }
 
+/* Hero copy must not block wheel scroll; only CTAs stay clickable. */
+.story-hero-layer,
+.story-hero-layer * {
+  pointer-events: none;
+}
+
+.story-hero-layer .story-hero-cta,
+.story-hero-layer .story-hero-cta * {
+  pointer-events: auto;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .story-touch-scroll {
+    touch-action: pan-y;
+  }
+}
+
 ::selection {
   background: rgba(0, 199, 107, 0.25);
 }

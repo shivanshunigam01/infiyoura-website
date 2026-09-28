@@ -39,30 +39,14 @@ export function Navbar() {
   }, []);
 
   useEffect(() => {
-    if (!open) {
-      document.body.style.removeProperty("overflow");
-      return;
-    }
-    const lock = () => {
-      if (window.matchMedia("(max-width: 1023px)").matches) {
-        document.body.style.overflow = "hidden";
-      }
-    };
-    lock();
-    window.addEventListener("resize", lock);
+    const lock = open && window.matchMedia("(max-width: 1023px)").matches;
+    document.body.style.overflow = lock ? "hidden" : "";
+    document.documentElement.style.overflow = lock ? "hidden" : "";
     return () => {
-      window.removeEventListener("resize", lock);
-      document.body.style.removeProperty("overflow");
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
     };
   }, [open]);
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
 
   const lightNav = !open && (onStory || !scrolled);
 
@@ -145,7 +129,7 @@ export function Navbar() {
           className="fixed inset-0 z-[110] flex flex-col bg-zinc-950 lg:hidden"
           role="dialog"
           aria-modal="true"
-          aria-label="Main menu"
+          aria-label="Menu"
         >
           <div
             className="flex flex-1 flex-col overflow-y-auto overscroll-contain px-5 pb-[max(2rem,var(--safe-bottom))] pt-[calc(var(--nav-height)+var(--safe-top)+1.25rem)] sm:px-8"

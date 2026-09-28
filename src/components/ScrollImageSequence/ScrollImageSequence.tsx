@@ -1,6 +1,7 @@
 "use client";
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef } from "react";
 import { FRAME_COUNT, getFramePath } from "@/lib/site";
+import { cn } from "@/lib/cn";
 import { getDeviceTier, getMaxCanvasDpr, getSupersampleScale } from "@/lib/viewport";
 
 export type ScrollImageSequenceHandle = { setScrollProgress: (p: number) => void };
@@ -12,8 +13,8 @@ type Props = {
   representativeFrame?: number;
   fit?: "cover" | "contain";
 };
-/** 1 = frames locked to scroll (scrub). Lower = floaty playback lag. */
-const SCROLL_FRAME_LERP = 1;
+/** Scroll scrub with light ease so frames feel animated, not video playback. */
+const SCROLL_FRAME_LERP = 0.55;
 const DRAW_FILTER = "contrast(1.1) saturate(1.12) brightness(1.04)";
 
 function paintFrame(
@@ -217,7 +218,7 @@ export const ScrollImageSequence = forwardRef<ScrollImageSequenceHandle, Props>(
     return (
       <div
         ref={boxRef}
-        className={className}
+        className={cn("story-touch-scroll", className)}
         style={{ width: "100%", height: "100%", minHeight: "100%" }}
       >
         <canvas ref={canvasRef} className="story-frame-canvas block h-full w-full" aria-hidden />
