@@ -1,7 +1,6 @@
 "use client";
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef } from "react";
 import { FRAME_COUNT, getFramePath } from "@/lib/site";
-import { cn } from "@/lib/cn";
 import { getDeviceTier, getMaxCanvasDpr, getSupersampleScale } from "@/lib/viewport";
 
 export type ScrollImageSequenceHandle = { setScrollProgress: (p: number) => void };
@@ -218,8 +217,8 @@ export const ScrollImageSequence = forwardRef<ScrollImageSequenceHandle, Props>(
     return (
       <div
         ref={boxRef}
-        className={cn("touch-pan-y", className)}
-        style={{ width: "100%", height: "100%", minHeight: "100%", touchAction: "pan-y" }}
+        className={className}
+        style={{ width: "100%", height: "100%", minHeight: "100%" }}
       >
         <canvas ref={canvasRef} className="story-frame-canvas block h-full w-full" aria-hidden />
       </div>

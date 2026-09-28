@@ -224,7 +224,7 @@ export function StorySection() {
 
         className={cn(
 
-          "touch-pan-y sticky top-0 z-0 h-[100dvh] max-h-[100dvh] min-h-[100svh] w-full max-w-[100vw] overflow-hidden overscroll-none",
+          "sticky top-0 z-0 h-[100dvh] max-h-[100dvh] min-h-[100svh] w-full max-w-[100vw] overflow-hidden",
 
           reduced && "relative min-h-[100svh]",
 

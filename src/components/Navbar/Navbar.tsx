@@ -39,11 +39,30 @@ export function Navbar() {
   }, []);
 
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
+    if (!open) {
+      document.body.style.removeProperty("overflow");
+      return;
+    }
+    const lock = () => {
+      if (window.matchMedia("(max-width: 1023px)").matches) {
+        document.body.style.overflow = "hidden";
+      }
+    };
+    lock();
+    window.addEventListener("resize", lock);
     return () => {
-      document.body.style.overflow = "";
+      window.removeEventListener("resize", lock);
+      document.body.style.removeProperty("overflow");
     };
   }, [open]);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   const lightNav = !open && (onStory || !scrolled);
 
@@ -121,41 +140,41 @@ export function Navbar() {
         </div>
       </header>
 
-      {/* Full-screen mobile menu — sibling of header so z-index sits above the scroll hero */}
-      <div
-        className={cn(
-          "fixed inset-0 z-[110] flex flex-col bg-zinc-950 lg:hidden transition-opacity duration-300",
-          open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0",
-        )}
-        aria-hidden={!open}
-      >
+      {open ? (
         <div
-          className="flex flex-1 flex-col overflow-y-auto overscroll-contain px-5 pb-[max(2rem,var(--safe-bottom))] pt-[calc(var(--nav-height)+var(--safe-top)+1.25rem)] sm:px-8"
+          className="fixed inset-0 z-[110] flex flex-col bg-zinc-950 lg:hidden"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Main menu"
         >
-          <nav className="flex flex-col" aria-label="Mobile">
-            {NAV.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                className="border-b border-white/10 py-4 text-2xl font-semibold tracking-tight text-white transition hover:text-[var(--brand-green)] sm:py-5 sm:text-3xl"
-                onClick={() => setOpen(false)}
-              >
-                {item.label}
-              </a>
-            ))}
-          </nav>
+          <div
+            className="flex flex-1 flex-col overflow-y-auto overscroll-contain px-5 pb-[max(2rem,var(--safe-bottom))] pt-[calc(var(--nav-height)+var(--safe-top)+1.25rem)] sm:px-8"
+          >
+            <nav className="flex flex-col" aria-label="Mobile">
+              {NAV.map((item) => (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  className="border-b border-white/10 py-4 text-2xl font-semibold tracking-tight text-white transition hover:text-[var(--brand-green)] sm:py-5 sm:text-3xl"
+                  onClick={() => setOpen(false)}
+                >
+                  {item.label}
+                </a>
+              ))}
+            </nav>
 
-          <div className="mt-10">
-            <Button href="/contact" className="w-full" onClick={() => setOpen(false)}>
-              Start a project
-            </Button>
+            <div className="mt-10">
+              <Button href="/contact" className="w-full" onClick={() => setOpen(false)}>
+                Start a project
+              </Button>
+            </div>
+
+            <p className="mt-auto pt-10 text-center text-xs uppercase tracking-[0.25em] text-zinc-500">
+              {SITE.tagline}
+            </p>
           </div>
-
-          <p className="mt-auto pt-10 text-center text-xs uppercase tracking-[0.25em] text-zinc-500">
-            {SITE.tagline}
-          </p>
         </div>
-      </div>
+      ) : null}
     </>
   );
 }
