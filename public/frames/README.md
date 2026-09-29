@@ -1,6 +1,8 @@
 # Scroll animation frames
 
-The homepage story section expects **300** JPEG frames named `ezgif-frame-001.jpg` through `ezgif-frame-300.jpg`.
+**Desktop / tablet (≥640px):** **300** JPEGs in this folder — `ezgif-frame-001.jpg` … `ezgif-frame-300.jpg`.
+
+**Mobile phones (&lt;640px):** **180** JPEGs in `public/frames-mobile/` with the same naming pattern (portrait-optimized export).
 
 These files are large. If they are not in your Git repository, deploy will succeed but the scroll animation will not show until you either:
 

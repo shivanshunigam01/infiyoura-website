@@ -158,6 +158,7 @@ export function StorySection() {
 
     window.addEventListener("scroll", onScrollOrResize, { passive: true });
     document.addEventListener("scroll", onScrollOrResize, { passive: true });
+    document.documentElement.addEventListener("scroll", onScrollOrResize, { passive: true });
     window.addEventListener("resize", onScrollOrResize);
     window.visualViewport?.addEventListener("resize", onScrollOrResize);
     window.visualViewport?.addEventListener("scroll", onScrollOrResize);
@@ -170,6 +171,7 @@ export function StorySection() {
       ro.disconnect();
       window.removeEventListener("scroll", onScrollOrResize);
       document.removeEventListener("scroll", onScrollOrResize);
+      document.documentElement.removeEventListener("scroll", onScrollOrResize);
       window.removeEventListener("resize", onScrollOrResize);
       window.visualViewport?.removeEventListener("resize", onScrollOrResize);
       window.visualViewport?.removeEventListener("scroll", onScrollOrResize);
@@ -230,7 +232,7 @@ export function StorySection() {
 
         className={cn(
 
-          "sticky top-0 z-0 h-[100dvh] max-h-[100dvh] min-h-[100svh] w-full max-w-[100vw] overflow-hidden",
+          "story-scroll-sticky sticky top-0 z-0 h-[100dvh] max-h-[100dvh] min-h-[100svh] w-full max-w-[100vw] overflow-hidden",
 
           reduced && "relative min-h-[100svh]",
 
@@ -238,7 +240,7 @@ export function StorySection() {
 
       >
 
-        <div className="absolute inset-0 h-full w-full">
+        <div className="story-frame-layer absolute inset-0 h-full w-full">
 
           <ScrollImageSequence
 

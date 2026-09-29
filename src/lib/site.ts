@@ -39,6 +39,8 @@ export const STORY_SCROLL_HEIGHT_VH_MOBILE = 560;
 export const FRAME_ASPECT_RATIO = 16 / 9;
 
 export const FRAME_COUNT = 300;
+/** Phone scroll sequence length (separate asset set under `/frames-mobile`). */
+export const MOBILE_FRAME_COUNT = 180;
 
 /** Stop scroll animation before frames where the Infiyoura logo appears (0–1). */
 export const STORY_ANIMATION_MAX_PROGRESS = 0.74;
@@ -47,11 +49,29 @@ export const STORY_ANIMATION_MAX_PROGRESS = 0.74;
 export const STORY_TEXT_MAX_PROGRESS = 0.72;
 export const FRAME_BASE_PATH =
   process.env.NEXT_PUBLIC_FRAME_BASE_PATH?.replace(/\/$/, "") || "/frames";
+/** Portrait / phone-optimized scroll frames (used below `sm` / 640px). */
+export const FRAME_MOBILE_BASE_PATH =
+  process.env.NEXT_PUBLIC_FRAME_MOBILE_BASE_PATH?.replace(/\/$/, "") || "/frames-mobile";
+export type ScrollFrameSet = "desktop" | "mobile";
 export const LOGO_PATH = "/logo/infiyoura-logo.png";
 export const FAVICON_PATH = "/favicon.png";
 export const LOGO_ALT = `${SITE.name} — ${SITE.tagline}`;
 
-export function getFramePath(index: number): string {
-  const n = Math.max(1, Math.min(FRAME_COUNT, index));
-  return `${FRAME_BASE_PATH}/ezgif-frame-${String(n).padStart(3, "0")}.jpg`;
+function mapScrollIndexToMobileFrame(index: number): number {
+  const clamped = Math.max(1, Math.min(FRAME_COUNT, index));
+  const t = (clamped - 1) / (FRAME_COUNT - 1);
+  return 1 + Math.round(t * (MOBILE_FRAME_COUNT - 1));
+}
+
+export function getFramePath(index: number, set: ScrollFrameSet = "desktop"): string {
+  const base = set === "mobile" ? FRAME_MOBILE_BASE_PATH : FRAME_BASE_PATH;
+  const n =
+    set === "mobile"
+      ? mapScrollIndexToMobileFrame(index)
+      : Math.max(1, Math.min(FRAME_COUNT, index));
+  return `${base}/ezgif-frame-${String(n).padStart(3, "0")}.jpg`;
+}
+
+export function getScrollFrameSet(viewportWidth: number): ScrollFrameSet {
+  return viewportWidth < 640 ? "mobile" : "desktop";
 }

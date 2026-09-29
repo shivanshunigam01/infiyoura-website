@@ -85,8 +85,18 @@ body {
 }
 
 @media (hover: none) and (pointer: coarse) {
-  .story-touch-scroll {
+  /* Let finger scroll reach the document; rAF + scroll listeners scrub frames. */
+  .story-scroll-sticky,
+  .story-frame-layer,
+  .story-touch-scroll,
+  .story-frame-canvas {
     touch-action: pan-y;
+    pointer-events: none;
+  }
+
+  .story-scroll-sticky .story-hero-cta,
+  .story-scroll-sticky .story-hero-cta * {
+    pointer-events: auto;
   }
 }
 

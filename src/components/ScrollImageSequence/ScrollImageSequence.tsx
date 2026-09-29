@@ -1,6 +1,12 @@
 "use client";
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef } from "react";
-import { FRAME_COUNT, STORY_ANIMATION_MAX_PROGRESS, getFramePath } from "@/lib/site";
+import {
+  FRAME_COUNT,
+  STORY_ANIMATION_MAX_PROGRESS,
+  getFramePath,
+  getScrollFrameSet,
+  type ScrollFrameSet,
+} from "@/lib/site";
 import { cn } from "@/lib/cn";
 import { getDeviceTier, getMaxCanvasDpr, getSupersampleScale } from "@/lib/viewport";
 
@@ -56,6 +62,7 @@ export const ScrollImageSequence = forwardRef<ScrollImageSequenceHandle, Props>(
     const tgt = useRef(1);
     const raf = useRef(0);
     const tier = useRef<ReturnType<typeof getDeviceTier>>("desktop");
+    const frameSet = useRef<ScrollFrameSet>("desktop");
     const ready = useRef(false);
     const lastPaint = useRef({ idx: -1, w: 0, h: 0 });
     const drawRef = useRef<() => void>(() => {});
@@ -66,7 +73,7 @@ export const ScrollImageSequence = forwardRef<ScrollImageSequenceHandle, Props>(
         loading.current.add(i);
         const img = new Image();
         img.decoding = hi ? "sync" : "async";
-        img.src = getFramePath(i);
+        img.src = getFramePath(i, frameSet.current);
         const done = () => {
           loading.current.delete(i);
           if (!img.naturalWidth) return;
@@ -190,12 +197,23 @@ export const ScrollImageSequence = forwardRef<ScrollImageSequenceHandle, Props>(
       drawRef.current = draw;
     }, [draw]);
 
+    const syncViewport = useCallback(() => {
+      const w = window.innerWidth;
+      tier.current = getDeviceTier(w);
+      const nextSet = getScrollFrameSet(w);
+      if (nextSet !== frameSet.current) {
+        frameSet.current = nextSet;
+        imgs.current.clear();
+        loading.current.clear();
+        ready.current = false;
+        load(1, true);
+        preload(Math.round(cur.current));
+      }
+      lastPaint.current = { idx: -1, w: 0, h: 0 };
+    }, [load, preload]);
+
     useEffect(() => {
-      const refreshTier = () => {
-        tier.current = getDeviceTier(window.innerWidth);
-        lastPaint.current = { idx: -1, w: 0, h: 0 };
-      };
-      refreshTier();
+      syncViewport();
       load(1, true);
       preload(1);
 
@@ -219,7 +237,7 @@ export const ScrollImageSequence = forwardRef<ScrollImageSequenceHandle, Props>(
       raf.current = requestAnimationFrame(tick);
 
       const onResize = () => {
-        refreshTier();
+        syncViewport();
         draw();
       };
       addEventListener("resize", onResize);
@@ -231,7 +249,7 @@ export const ScrollImageSequence = forwardRef<ScrollImageSequenceHandle, Props>(
         ro.disconnect();
         cancelAnimationFrame(raf.current);
       };
-    }, [draw, load, preload, reducedMotion]);
+    }, [draw, load, preload, reducedMotion, syncViewport]);
 
     return (
       <div

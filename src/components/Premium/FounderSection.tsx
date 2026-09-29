@@ -13,14 +13,14 @@ export function FounderSection({ className, showEyebrow = true }: Props) {
     <section className={className ?? "border-t border-white/10 bg-zinc-950 py-24 lg:py-32"}>
       <div className="mx-auto max-w-7xl px-4 sm:px-4 sm:px-5 lg:px-8">
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-          <RevealOnScroll className="relative mx-auto w-full max-w-md lg:max-w-none">
+          <RevealOnScroll className="relative mx-auto w-full max-w-[220px] sm:max-w-[260px] lg:max-w-[300px]">
             <div className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-white/10 shadow-[0_24px_80px_rgba(0,0,0,0.45)]">
               <Image
                 src={FOUNDER.image}
                 alt={FOUNDER.imageAlt}
                 fill
                 className="object-cover object-top"
-                sizes="(max-width: 1024px) 90vw, 480px"
+                sizes="(max-width: 640px) 220px, (max-width: 1024px) 260px, 300px"
                 priority={false}
               />
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-zinc-950/50 via-transparent to-transparent" />
