@@ -48,10 +48,10 @@ export function CaseStudies() {
         </div>
         <RevealOnScroll className="mt-12" delay={150}>
           <Link
-            href="/work"
+            href="/our-works"
             className="text-xs font-semibold uppercase tracking-[0.2em] text-white underline-offset-4 hover:text-[var(--brand-green)] hover:underline"
           >
-            See all work
+            See all our works
           </Link>
         </RevealOnScroll>
       </div>

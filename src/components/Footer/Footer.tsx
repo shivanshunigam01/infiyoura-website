@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Logo } from "@/components/UI/Logo";
 import { FOOTER_COLUMNS } from "@/lib/marketing-pages";
-import { SITE, SITE_ADDRESS_LINES, SITE_MAPS_URL } from "@/lib/site";
+import { SITE, SITE_ADDRESS_LINES, SITE_MAPS_URL, SITE_WHATSAPP_URL } from "@/lib/site";
 
 export function Footer() {
   return (
@@ -14,6 +14,17 @@ export function Footer() {
             <p className="mt-2 text-xs text-zinc-500">Founded by Jeckvelin Mecwan</p>
             <a href={`mailto:${SITE.email}`} className="mt-4 inline-block text-sm text-white hover:text-[var(--brand-green)]">
               {SITE.email}
+            </a>
+            <a href={`tel:${SITE.phoneTel}`} className="mt-2 block text-sm text-zinc-300 hover:text-[var(--brand-green)]">
+              {SITE.phone}
+            </a>
+            <a
+              href={SITE_WHATSAPP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-1 block text-sm text-zinc-300 hover:text-[var(--brand-green)]"
+            >
+              WhatsApp {SITE.whatsapp}
             </a>
             <address className="mt-4 not-italic text-sm leading-relaxed text-zinc-500">
               {SITE_ADDRESS_LINES.map((line) => (

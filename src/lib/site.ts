@@ -6,6 +6,10 @@ export const SITE = {
   url: "https://infiyoura.com",
   tagline: "YOUR IDEAS. OUR TECHNOLOGY.",
   email: "hello@infiyoura.com",
+  phone: "+91 63543 42597",
+  phoneTel: "+916354342597",
+  whatsapp: "+91 72476 50665",
+  whatsappTel: "917247650665",
   address: {
     line1: "FF-04, Indraprastha Business House",
     line2: "Near Vijay Cross Road",
@@ -22,6 +26,8 @@ const ADDRESS_QUERY = [
 ].join(", ");
 
 export const SITE_MAPS_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ADDRESS_QUERY)}`;
+
+export const SITE_WHATSAPP_URL = `https://wa.me/${SITE.whatsappTel}`;
 
 export const SITE_ADDRESS_LINES = [
   SITE.address.line1,

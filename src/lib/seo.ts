@@ -86,6 +86,18 @@ export const PAGE_SEO: Record<
     description:
       "See how Infiyoura helps brands grow with websites, applications, and integrated digital marketing—selected work and outcomes.",
   },
+  "/our-works": {
+    keywords: [
+      ...GLOBAL_KEYWORDS,
+      "our works",
+      "client portfolio",
+      "live projects",
+      "website portfolio India",
+      "production websites",
+    ],
+    description:
+      "Explore Infiyoura's live client projects—automotive, healthcare, finance, travel, SaaS, and enterprise platforms with previews and tech stacks.",
+  },
   "/contact": {
     keywords: [
       ...GLOBAL_KEYWORDS,
@@ -264,6 +276,7 @@ export function localBusinessJsonLd() {
     image: absoluteUrl(LOGO_PATH),
     url: SITE.url,
     email: SITE.email,
+    telephone: SITE.phoneTel,
     description: SITE.description,
     priceRange: "$$",
     address: {

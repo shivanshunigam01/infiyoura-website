@@ -95,6 +95,7 @@ export const FOOTER_COLUMNS = [
     title: "Company",
     links: [
       { label: "About", href: "/about" },
+      { label: "Our Works", href: "/our-works" },
       { label: "Work", href: "/work" },
       { label: "Careers", href: "/careers" },
       { label: "Blog", href: "/blog" },

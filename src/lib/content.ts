@@ -1,6 +1,6 @@
 export const NAV = [
   { label: "Services", href: "/services" },
-  { label: "Work", href: "/work" },
+  { label: "Our Works", href: "/our-works" },
   { label: "About", href: "/about" },
   { label: "Careers", href: "/careers" },
   { label: "Blog", href: "/blog" },

@@ -1,5 +1,5 @@
 import { UNSPLASH_IT } from "@/lib/unsplash";
-import { SITE_MAPS_URL } from "@/lib/site";
+import { SITE, SITE_MAPS_URL, SITE_WHATSAPP_URL } from "@/lib/site";
 
 export const SERVICE_SLUG_IMAGES: Record<string, string> = {
   "website-development": UNSPLASH_IT.laptopCode,
@@ -166,7 +166,9 @@ export const CONTACT_FAQ = [
 ] as const;
 
 export const CONTACT_CHANNELS = [
-  { label: "Email", value: "hello@infiyoura.com", href: "mailto:hello@infiyoura.com" },
+  { label: "Email", value: SITE.email, href: `mailto:${SITE.email}` },
+  { label: "Phone", value: SITE.phone, href: `tel:${SITE.phoneTel}` },
+  { label: "WhatsApp", value: SITE.whatsapp, href: SITE_WHATSAPP_URL },
   {
     label: "Office",
     value: "FF-04, Indraprastha Business House, Near Vijay Cross Road, Ahmedabad 380009",
