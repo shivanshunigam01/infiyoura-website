@@ -65,6 +65,7 @@ export const ScrollImageSequence = forwardRef<ScrollImageSequenceHandle, Props>(
     const frameSet = useRef<ScrollFrameSet>("desktop");
     const ready = useRef(false);
     const lastPaint = useRef({ idx: -1, w: 0, h: 0 });
+    const lastGoodIdx = useRef(1);
     const drawRef = useRef<() => void>(() => {});
 
     const load = useCallback(
@@ -120,8 +121,11 @@ export const ScrollImageSequence = forwardRef<ScrollImageSequenceHandle, Props>(
         const frame = 1 + animP * (FRAME_COUNT - 1);
         tgt.current = frame;
         cur.current = frame;
-        lastPaint.current.idx = -1;
-        preload(Math.round(frame));
+        const nextIdx = Math.max(1, Math.round(frame));
+        if (nextIdx !== lastPaint.current.idx) {
+          lastPaint.current.idx = -1;
+        }
+        preload(nextIdx);
       },
       [preload],
     );
@@ -132,7 +136,6 @@ export const ScrollImageSequence = forwardRef<ScrollImageSequenceHandle, Props>(
         setScrollProgress(sectionProgress: number) {
           if (reducedMotion) return;
           applySectionProgress(sectionProgress);
-          drawRef.current();
         },
       }),
       [applySectionProgress, reducedMotion],
@@ -142,7 +145,7 @@ export const ScrollImageSequence = forwardRef<ScrollImageSequenceHandle, Props>(
       const c = canvasRef.current;
       const b = boxRef.current;
       if (!c || !b) return;
-      const ctx = c.getContext("2d", { alpha: false, desynchronized: true });
+      const ctx = c.getContext("2d", { alpha: false });
       if (!ctx) return;
       const r = b.getBoundingClientRect();
       if (r.width < 2 || r.height < 2) return;
@@ -159,10 +162,13 @@ export const ScrollImageSequence = forwardRef<ScrollImageSequenceHandle, Props>(
       }
 
       const idx = reducedMotion ? representativeFrame : Math.max(1, Math.round(cur.current));
-      const img = imgs.current.get(idx);
+      let img = imgs.current.get(idx);
       if (!img?.naturalWidth) {
         if (!reducedMotion) load(idx, true);
-        return;
+        img = imgs.current.get(lastGoodIdx.current);
+        if (!img?.naturalWidth) return;
+      } else {
+        lastGoodIdx.current = idx;
       }
 
       if (lastPaint.current.idx === idx && lastPaint.current.w === w && lastPaint.current.h === h) {

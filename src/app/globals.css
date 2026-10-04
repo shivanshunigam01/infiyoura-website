@@ -15,7 +15,8 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  /* `smooth` fights scroll-scrubbed canvas heroes (laggy / flickery progress). */
+  scroll-behavior: auto;
   overflow-x: clip;
   overflow-y: auto;
   -webkit-text-size-adjust: 100%;
@@ -71,6 +72,24 @@ body {
 
 .story-scroll-section {
   -webkit-overflow-scrolling: touch;
+}
+
+.story-scroll-sticky {
+  --story-p: 0;
+  --hero-lift: -28px;
+  --story-hint-opacity: 1;
+}
+
+.story-hero-layer {
+  opacity: max(0, calc(1 - var(--story-p) / 0.14));
+  transform: translate3d(0, calc(var(--story-p) * var(--hero-lift)), 0);
+  will-change: opacity, transform;
+  backface-visibility: hidden;
+}
+
+.story-scroll-hint {
+  opacity: var(--story-hint-opacity);
+  will-change: opacity;
 }
 
 /* Hero copy must not block wheel scroll; only CTAs stay clickable. */

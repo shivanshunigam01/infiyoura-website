@@ -68,6 +68,10 @@ export function StorySection() {
 
   const sectionRef = useRef<HTMLElement>(null);
 
+  const stickyRef = useRef<HTMLDivElement>(null);
+
+  const progressBarRef = useRef<HTMLDivElement>(null);
+
   const seqRef = useRef<ScrollImageSequenceHandle>(null);
 
   const [progress, setProgress] = useState(0);
@@ -108,7 +112,11 @@ export function StorySection() {
 
       setScrollHeightVh(getScrollHeightVh());
 
-      setCompact(window.innerWidth < 640);
+      const isCompact = window.innerWidth < 640;
+
+      setCompact(isCompact);
+
+      stickyRef.current?.style.setProperty("--hero-lift", isCompact ? "-14px" : "-28px");
 
     };
 
@@ -128,53 +136,62 @@ export function StorySection() {
 
   useEffect(() => {
     const el = sectionRef.current;
-    if (!el || reduced) return;
+    const sticky = stickyRef.current;
+    if (!el || !sticky || reduced) return;
 
     let raf = 0;
-    let lastProgress = -1;
+    let lastQuant = -1;
+    let lastOverlayKey = "";
 
     const update = () => {
+      raf = 0;
       const vh = getStoryScrollViewportHeight();
       const p = storySectionProgress(el, vh);
+
+      sticky.style.setProperty("--story-p", String(p));
+      sticky.style.setProperty("--story-hint-opacity", String(p < 0.06 ? 1 - p / 0.06 : 0));
+      if (progressBarRef.current) {
+        progressBarRef.current.style.width = `${p * 100}%`;
+      }
+
       seqRef.current?.setScrollProgress(p);
-      if (Math.abs(p - lastProgress) > 0.0008) {
-        lastProgress = p;
+
+      const overlay =
+        p < STORY_TEXT_MAX_PROGRESS
+          ? STORY_OVERLAYS.find((o) => p >= o.start && p < o.end)
+          : undefined;
+      const overlayKey = overlay?.title ?? "";
+      const quant = Math.floor(p * 160);
+
+      if (quant !== lastQuant || overlayKey !== lastOverlayKey) {
+        lastQuant = quant;
+        lastOverlayKey = overlayKey;
         setProgress(p);
       }
     };
 
-    const onScrollOrResize = () => {
-      cancelAnimationFrame(raf);
+    const schedule = () => {
+      if (raf) return;
       raf = requestAnimationFrame(update);
     };
 
-    const loop = () => {
-      update();
-      raf = requestAnimationFrame(loop);
-    };
-
     update();
-    raf = requestAnimationFrame(loop);
 
-    window.addEventListener("scroll", onScrollOrResize, { passive: true });
-    document.addEventListener("scroll", onScrollOrResize, { passive: true });
-    document.documentElement.addEventListener("scroll", onScrollOrResize, { passive: true });
-    window.addEventListener("resize", onScrollOrResize);
-    window.visualViewport?.addEventListener("resize", onScrollOrResize);
-    window.visualViewport?.addEventListener("scroll", onScrollOrResize);
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    window.visualViewport?.addEventListener("resize", schedule);
+    window.visualViewport?.addEventListener("scroll", schedule);
 
-    const ro = new ResizeObserver(onScrollOrResize);
+    const ro = new ResizeObserver(schedule);
     ro.observe(el);
 
     return () => {
-      cancelAnimationFrame(raf);
+      if (raf) cancelAnimationFrame(raf);
       ro.disconnect();
-      window.removeEventListener("scroll", onScrollOrResize);
-      document.removeEventListener("scroll", onScrollOrResize);
-      document.documentElement.removeEventListener("scroll", onScrollOrResize);
-      window.removeEventListener("resize", onScrollOrResize);
-      window.visualViewport?.removeEventListener("resize", onScrollOrResize);
-      window.visualViewport?.removeEventListener("scroll", onScrollOrResize);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      window.visualViewport?.removeEventListener("resize", schedule);
+      window.visualViewport?.removeEventListener("scroll", schedule);
     };
   }, [reduced, scrollHeightVh]);
 
@@ -200,13 +217,7 @@ export function StorySection() {
 
 
 
-  const heroOpacity = Math.max(0, 1 - progress / HERO_FADE_END);
-
   const storyOpacity = progress >= HERO_FADE_END * 0.65 ? Math.min(1, (progress - HERO_FADE_END * 0.5) / 0.12) : 0;
-
-  const scrollHintOpacity = progress < 0.06 ? 1 - progress / 0.06 : 0;
-
-  const heroLift = progress * (compact ? -14 : -28);
 
   const storyLift = (progress - 0.1) * (compact ? -8 : -16);
 
@@ -229,6 +240,8 @@ export function StorySection() {
     >
 
       <div
+
+        ref={stickyRef}
 
         className={cn(
 
@@ -307,15 +320,13 @@ export function StorySection() {
 
         <div
 
-          className="story-hero-layer absolute inset-0 z-10 flex flex-col items-center justify-center px-6 pt-[calc(var(--nav-height)+var(--safe-top)+0.5rem)] text-center sm:px-10 md:px-12"
+          className={cn(
 
-          style={{
+            "story-hero-layer absolute inset-0 z-10 flex flex-col items-center justify-center px-6 pt-[calc(var(--nav-height)+var(--safe-top)+0.5rem)] text-center sm:px-10 md:px-12",
 
-            opacity: heroOpacity,
+            reduced && "!transform-none !opacity-100",
 
-            transform: reduced ? undefined : `translateY(${heroLift}px)`,
-
-          }}
+          )}
 
         >
 
@@ -498,9 +509,11 @@ export function StorySection() {
 
               <div
 
-                className="h-full bg-gradient-to-r from-[var(--brand-green)] to-emerald-300 transition-[width] duration-150 ease-out shadow-[0_0_12px_rgba(0,199,107,0.5)]"
+                ref={progressBarRef}
 
-                style={{ width: `${progress * 100}%` }}
+                className="h-full bg-gradient-to-r from-[var(--brand-green)] to-emerald-300 shadow-[0_0_12px_rgba(0,199,107,0.5)] will-change-[width]"
+
+                style={{ width: "0%" }}
 
               />
 
@@ -508,9 +521,7 @@ export function StorySection() {
 
             <div
 
-              className="pointer-events-none absolute bottom-[max(1.25rem,var(--safe-bottom))] left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2 animate-float-soft sm:bottom-10 sm:gap-3"
-
-              style={{ opacity: scrollHintOpacity }}
+              className="story-scroll-hint pointer-events-none absolute bottom-[max(1.25rem,var(--safe-bottom))] left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2 animate-float-soft sm:bottom-10 sm:gap-3"
 
             >
 
