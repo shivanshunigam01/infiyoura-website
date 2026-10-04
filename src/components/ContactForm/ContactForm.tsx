@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { CONTACT_SERVICES } from "@/lib/content";
+import { buildWeb3FormsPayload } from "@/lib/web3forms";
 
 type Props = {
   id?: string;
@@ -9,6 +10,9 @@ type Props = {
 };
 
 type Status = "idle" | "loading" | "success" | "error";
+
+const fieldClass =
+  "w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm contact-field";
 
 export function ContactForm({ id = "contact", className }: Props) {
   const [status, setStatus] = useState<Status>("idle");
@@ -21,22 +25,32 @@ export function ContactForm({ id = "contact", className }: Props) {
 
     const form = event.currentTarget;
     const formData = new FormData(form);
+    const payload = buildWeb3FormsPayload(formData);
+
+    if ("error" in payload) {
+      setStatus("error");
+      setErrorMessage(payload.error);
+      return;
+    }
 
     try {
-      const response = await fetch("/api/contact", {
+      const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
-        body: formData,
         headers: {
+          "Content-Type": "application/json",
           Accept: "application/json",
-          "X-Requested-With": "fetch",
         },
+        body: JSON.stringify(payload),
       });
 
-      const data = (await response.json()) as { ok?: boolean; error?: string };
+      const data = (await response.json()) as { success?: boolean; message?: string };
 
-      if (!response.ok || !data.ok) {
+      if (!response.ok || !data.success) {
         setStatus("error");
-        setErrorMessage(data.error ?? "Something went wrong. Please email us directly.");
+        setErrorMessage(
+          data.message ??
+            "Could not send your message. Please email us at infiyoura@gmail.com.",
+        );
         return;
       }
 
@@ -44,7 +58,7 @@ export function ContactForm({ id = "contact", className }: Props) {
       form.reset();
     } catch {
       setStatus("error");
-      setErrorMessage("Network error. Please try again or email us directly.");
+      setErrorMessage("Network error. Please try again or email infiyoura@gmail.com.");
     }
   }
 
@@ -60,40 +74,16 @@ export function ContactForm({ id = "contact", className }: Props) {
           {errorMessage}
         </p>
       ) : null}
-      <form className="space-y-4" onSubmit={onSubmit}>
+      <form className="contact-form space-y-4" onSubmit={onSubmit}>
         <input type="checkbox" name="botcheck" className="hidden" tabIndex={-1} autoComplete="off" aria-hidden />
-        <input
-          name="name"
-          required
-          placeholder="Name"
-          className="w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm"
-        />
-        <input
-          name="company"
-          placeholder="Company"
-          className="w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm"
-        />
-        <input
-          name="email"
-          required
-          type="email"
-          placeholder="Email"
-          className="w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm"
-        />
-        <input
-          name="phone"
-          type="tel"
-          placeholder="Phone"
-          className="w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm"
-        />
-        <input
-          name="country"
-          placeholder="Country"
-          className="w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm"
-        />
-        <select name="service" className="w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm" defaultValue="">
+        <input name="name" required placeholder="Name" className={fieldClass} />
+        <input name="company" placeholder="Company" className={fieldClass} />
+        <input name="email" required type="email" placeholder="Email" className={fieldClass} />
+        <input name="phone" type="tel" placeholder="Phone" className={fieldClass} />
+        <input name="country" placeholder="Country" className={fieldClass} />
+        <select name="service" required className={`${fieldClass} contact-service-select`} defaultValue="">
           <option value="" disabled>
-            Service
+            Select a service
           </option>
           {CONTACT_SERVICES.map((s) => (
             <option key={s} value={s}>
@@ -101,17 +91,13 @@ export function ContactForm({ id = "contact", className }: Props) {
             </option>
           ))}
         </select>
-        <input
-          name="budget"
-          placeholder="Budget"
-          className="w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm"
-        />
+        <input name="budget" placeholder="Budget" className={fieldClass} />
         <textarea
           name="details"
           required
           rows={4}
           placeholder="Project details"
-          className="w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm"
+          className={fieldClass}
         />
         <button
           type="submit"

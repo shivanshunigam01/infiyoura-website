@@ -63,9 +63,7 @@ export default async function ContactPage({ searchParams }: Props) {
                 Thanks—we received your message and will be in touch soon.
               </p>
             ) : null}
-            <ContactForm
-              className="[&_input]:border-white/15 [&_input]:bg-white/5 [&_input]:text-white [&_input]:placeholder:text-zinc-500 [&_select]:border-white/15 [&_select]:bg-white/5 [&_select]:text-white [&_textarea]:border-white/15 [&_textarea]:bg-white/5 [&_textarea]:text-white [&_textarea]:placeholder:text-zinc-500"
-            />
+            <ContactForm className="[&_.contact-field]:border-white/15 [&_.contact-field]:bg-white/5 [&_.contact-field]:text-white [&_.contact-field]:placeholder:text-zinc-500 [&_.contact-service-select]:text-zinc-900 [&_.contact-service-select]:bg-zinc-100" />
           </div>
         </div>
         <PageFaq items={CONTACT_FAQ} />

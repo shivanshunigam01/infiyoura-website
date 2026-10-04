@@ -119,6 +119,23 @@ body {
   }
 }
 
+/* Contact form: native select list must use dark text (avoid white-on-white options). */
+.contact-form .contact-service-select {
+  color-scheme: light;
+  cursor: pointer;
+  appearance: auto;
+  background-image: none;
+}
+
+.contact-form .contact-service-select option {
+  color: #18181b;
+  background-color: #fafafa;
+}
+
+.contact-form .contact-field::placeholder {
+  color: #71717a;
+}
+
 ::selection {
   background: rgba(0, 199, 107, 0.25);
 }
