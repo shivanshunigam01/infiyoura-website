@@ -108,7 +108,7 @@ export const PAGE_SEO: Record<
       "project inquiry",
     ],
     description:
-      "Contact Infiyoura for website development, apps, SEO, and marketing. Based in Ahmedabad, India—serving clients worldwide. hello@infiyoura.com",
+      "Contact Infiyoura for website development, apps, SEO, and marketing. Based in Ahmedabad, India—serving clients worldwide. infiyoura@gmail.com",
   },
   "/careers": {
     keywords: [

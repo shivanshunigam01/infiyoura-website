@@ -5,7 +5,7 @@ export const SITE = {
     "Infiyoura builds websites, software, mobile applications, AI solutions and digital growth systems for ambitious businesses worldwide.",
   url: "https://infiyoura.com",
   tagline: "YOUR IDEAS. OUR TECHNOLOGY.",
-  email: "hello@infiyoura.com",
+  email: "infiyoura@gmail.com",
   phone: "+91 63543 42597",
   phoneTel: "+916354342597",
   whatsapp: "+91 72476 50665",
