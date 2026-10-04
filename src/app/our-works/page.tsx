@@ -2,7 +2,10 @@ import { SiteShell } from "@/components/layout/SiteShell";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { InnerPageCta } from "@/components/layout/InnerPageCta";
 import { OurWorksGrid } from "@/components/OurWorks/OurWorksGrid";
+import { StructuredData } from "@/components/seo/StructuredData";
 import { pageMetadata } from "@/lib/metadata";
+import { OUR_WORKS_PROJECTS } from "@/lib/our-works";
+import { breadcrumbJsonLd, portfolioItemListJsonLd } from "@/lib/seo";
 
 export const metadata = pageMetadata({
   title: "Our Works",
@@ -12,8 +15,25 @@ export const metadata = pageMetadata({
 });
 
 export default function OurWorksPage() {
+  const portfolioSchema = portfolioItemListJsonLd(
+    OUR_WORKS_PROJECTS.map((p) => ({
+      name: p.title,
+      url: p.url,
+      description: p.description,
+    })),
+  );
+
   return (
     <SiteShell>
+      <StructuredData
+        data={[
+          breadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Our Works", path: "/our-works" },
+          ]),
+          portfolioSchema,
+        ]}
+      />
       <PageHeader
         eyebrow="Our works"
         title="Production-grade digital products"

@@ -1,0 +1,17 @@
+# Infiyoura (https://infiyoura.com)
+
+Infiyoura is a digital studio in Ahmedabad, India. We build websites, web applications, mobile apps, UI/UX, SEO, social media, paid ads, AI automation, and cloud DevOps for clients in India and worldwide.
+
+## Primary pages
+- Home: https://infiyoura.com/
+- Services: https://infiyoura.com/services
+- Our works (portfolio): https://infiyoura.com/our-works
+- Contact: https://infiyoura.com/contact
+- About: https://infiyoura.com/about
+
+## Sitemap
+https://infiyoura.com/sitemap.xml
+
+## Contact
+- Email: hello@infiyoura.com
+- Phone: +91 63543 42597

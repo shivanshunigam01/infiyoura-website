@@ -1,0 +1,6 @@
+/* Infiyoura — humans.txt */
+Team: Infiyoura Digital Studio
+Site: https://infiyoura.com
+Location: Ahmedabad, Gujarat, India
+Contact: hello@infiyoura.com
+Standards: HTML5, CSS, Next.js, accessibility, technical SEO

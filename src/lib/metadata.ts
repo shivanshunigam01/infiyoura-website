@@ -57,7 +57,7 @@ function sharedOpenGraph({
     locale: SEO_LOCALE,
     images: [
       {
-        url: LOGO_PATH,
+        url: `${SITE.url}${LOGO_PATH}`,
         alt: SITE.tagline,
         width: 1200,
         height: 630,
@@ -77,7 +77,7 @@ function sharedTwitter({
     card: "summary_large_image",
     title,
     description,
-    images: [LOGO_PATH],
+    images: [`${SITE.url}${LOGO_PATH}`],
     creator: process.env.NEXT_PUBLIC_TWITTER_HANDLE || undefined,
     site: process.env.NEXT_PUBLIC_TWITTER_SITE || undefined,
   };
@@ -121,6 +121,10 @@ export function rootMetadata(): Metadata {
     twitter: sharedTwitter({ title: SITE.title, description }),
     alternates: {
       canonical: SITE.url,
+      languages: { "en-IN": SITE.url },
+      types: {
+        "application/rss+xml": `${SITE.url}/rss.xml`,
+      },
     },
     other: {
       "geo.region": SEO_GEO.region,

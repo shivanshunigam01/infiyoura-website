@@ -336,6 +336,29 @@ export function websiteJsonLd() {
   };
 }
 
+export function portfolioItemListJsonLd(
+  items: { name: string; url: string; description: string }[],
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Infiyoura client projects",
+    description: "Selected production websites and platforms delivered by Infiyoura.",
+    numberOfItems: items.length,
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      item: {
+        "@type": "CreativeWork",
+        name: item.name,
+        url: item.url,
+        description: item.description,
+        creator: { "@id": `${SITE.url}/#organization` },
+      },
+    })),
+  };
+}
+
 export function breadcrumbJsonLd(items: { name: string; path: string }[]) {
   return {
     "@context": "https://schema.org",

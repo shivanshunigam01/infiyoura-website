@@ -1,37 +1,15 @@
 import type { MetadataRoute } from "next";
 import { SITE } from "@/lib/site";
-import { SERVICE_PAGES } from "@/lib/marketing-pages";
+import { allSitemapEntries } from "@/lib/sitemap-config";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = SITE.url;
-  const staticPaths = [
-    "",
-    "/about",
-    "/services",
-    "/work",
-    "/our-works",
-    "/contact",
-    "/careers",
-    "/blog",
-    "/privacy",
-    "/terms",
-    "/cookies",
-  ];
+  const base = SITE.url.replace(/\/$/, "");
+  const lastModified = new Date();
 
-  const now = new Date();
-
-  return [
-    ...staticPaths.map((path) => ({
-      url: `${base}${path}`,
-      lastModified: now,
-      changeFrequency: (path === "" ? "weekly" : "monthly") as "weekly" | "monthly",
-      priority: path === "" ? 1 : 0.7,
-    })),
-    ...SERVICE_PAGES.map((s) => ({
-      url: `${base}/services/${s.slug}`,
-      lastModified: now,
-      changeFrequency: "monthly" as const,
-      priority: 0.8,
-    })),
-  ];
+  return allSitemapEntries().map(({ path, changeFrequency, priority }) => ({
+    url: `${base}${path}`,
+    lastModified,
+    changeFrequency,
+    priority,
+  }));
 }
