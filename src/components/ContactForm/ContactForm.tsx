@@ -43,12 +43,17 @@ export function ContactForm({ id = "contact", className }: Props) {
         body: JSON.stringify(payload),
       });
 
-      const data = (await response.json()) as { success?: boolean; message?: string };
+      const data = (await response.json()) as {
+        success?: boolean;
+        message?: string;
+        error?: string;
+      };
 
       if (!response.ok || !data.success) {
         setStatus("error");
         setErrorMessage(
           data.message ??
+            data.error ??
             "Could not send your message. Please email us at infiyoura@gmail.com.",
         );
         return;

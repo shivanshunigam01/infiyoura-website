@@ -1,7 +1,16 @@
+const DEFAULT_ACCESS_KEY = "f460d54f-6e54-4a3e-b3ed-6072fa72ef33";
+
+function resolveAccessKey(raw: string | undefined): string | undefined {
+  const value = raw?.trim();
+  if (!value || /^your_access_key_here$/i.test(value)) return undefined;
+  return value;
+}
+
 /** Web3Forms access key (public; domain-restricted in Web3Forms dashboard). Override via env. */
 export const WEB3FORMS_ACCESS_KEY =
-  process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY?.trim() ||
-  "f460d54f-6e54-4a3e-b3ed-6072fa72ef33";
+  resolveAccessKey(process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY) ??
+  resolveAccessKey(process.env.WEB3FORMS_ACCESS_KEY) ??
+  DEFAULT_ACCESS_KEY;
 
 export function formatContactMessage(fields: Record<string, string>): string {
   const lines = [
